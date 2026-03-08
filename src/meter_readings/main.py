@@ -16,3 +16,8 @@ def main():
     config = Config.from_yaml(args.config)
 
     add_date(config.folders.input, config.folders.dated)
+    # TODO: extract meter's number
+    # TODO: extract meter reading
+    # TODO: read information into table file
+    # TODO: print latest trends
+    # TODO: (optional) generate graph
