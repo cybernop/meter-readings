@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from pathlib import Path
 
 from .date import add_date
@@ -5,11 +6,13 @@ from .model.config import Config
 
 
 def main():
-    config = Path(
-        "/home/cybernop/share/appartment/2025_23558_Am-Gueterbahnhof/Verbrauch/readings-config.yaml"
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument(
+        "--config", required=True, type=Path, help="Path to the config file"
     )
 
-    config = Config.from_yaml(config)
+    args = arg_parser.parse_args()
+
+    config = Config.from_yaml(args.config)
 
     add_date(config.folders.input, config.folders.dated)
-    print("test")
