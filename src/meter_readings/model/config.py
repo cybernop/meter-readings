@@ -11,6 +11,7 @@ class FoldersConfig(BaseModel):
 
 class Config(BaseModel):
     folders: FoldersConfig
+    serials: dict[str, str]
 
     @staticmethod
     def from_yaml(file: Path):

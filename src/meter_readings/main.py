@@ -3,7 +3,7 @@ from pathlib import Path
 
 from .date import add_date
 from .model.config import Config
-from .readings import get_readings
+from .readings import get_readings, render_grouped_readings
 
 
 def main():
@@ -17,7 +17,10 @@ def main():
     config = Config.from_yaml(args.config)
 
     add_date(config.folders.input, config.folders.dated)
-    readings = get_readings(config.folders.dated)
+    readings = get_readings(config.folders.dated, list(config.serials.keys()))
+    render_grouped_readings(
+        readings.group_by_serial(), config.serials, output_dir=args.config.parent
+    )
     # TODO: extract meter's number
     # TODO: extract meter reading
     # TODO: read information into table file
