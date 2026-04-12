@@ -19,3 +19,6 @@ def get_readings(input_dir: Path):
     log.info(f"{len(not_matching)} not matching readings pattern")
 
     readings = Readings.from_files(input_dir.iterdir())
+    log.info(f"got {len(readings)}")
+
+    return readings

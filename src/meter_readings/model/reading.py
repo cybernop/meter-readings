@@ -73,9 +73,18 @@ class Reading:
         return str(self)
 
 
+class SerialReadings:
+    def __init__(self, serial: str) -> None:
+        self.serial: str = serial
+        self.readings: list[Reading] = []
+
+
 class Readings:
     def __init__(self) -> None:
-        self.readings = list[Reading]
+        self.readings: list[Reading] = []
+
+    def __len__(self):
+        return len(self.readings)
 
     @staticmethod
     def from_files(files: Iterable[Path]):
@@ -85,3 +94,17 @@ class Readings:
         ]
 
         return rs
+
+    def group_by_serial(self):
+        res: dict[str, SerialReadings] = {}
+
+        for r in self.readings:
+            if r.serial is None:
+                continue
+
+            if r.serial not in res:
+                res[r.serial] = SerialReadings(r.serial)
+
+            res[r.serial].readings.append(r)
+
+        return res
