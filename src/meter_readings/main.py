@@ -1,3 +1,4 @@
+import os
 from argparse import ArgumentParser
 from pathlib import Path
 
@@ -15,6 +16,8 @@ def main():
     args = arg_parser.parse_args()
 
     config = Config.from_yaml(args.config)
+
+    os.chdir(args.config.parent)
 
     add_date(config.folders.input, config.folders.dated)
     readings = get_readings(config.folders.dated, list(config.serials.keys()))
