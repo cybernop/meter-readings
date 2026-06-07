@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = [
-    "pydantic>=2.12.5",
-    "pyyaml>=6.0.3",
-]
+dependencies = ["pydantic>=2.12.5", "pyyaml>=6.0.3"]
+
+[project.scripts]
+meter_readings = "meter_readings.main:main"
