@@ -28,3 +28,8 @@ class Reading(BaseModel):
 
         reading = Reading.model_validate(data)
         return reading
+
+    def file_name(self) -> str:
+        value = str(self.value).replace(".", "-").removesuffix("-0")
+        name = f"{self.date!s}_{self.serial}{'-' + self.id if self.id else ''}_{value}"
+        return name
