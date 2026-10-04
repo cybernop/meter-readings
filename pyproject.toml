@@ -8,3 +8,9 @@ dependencies = ["pydantic>=2.12.5", "pyyaml>=6.0.3"]
 
 [project.scripts]
 meter_readings = "meter_readings.main:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "tox>=4.64.8",
+]
