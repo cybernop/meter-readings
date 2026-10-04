@@ -1,20 +1,19 @@
 from datetime import date
 
-from meter_readings.data import file_name
-from meter_readings.model.reading_ import Reading
+from meter_readings.model.reading import Reading
 
 
-def test_reading_from_only_date():
+def test_reading_from_file_name_only_date():
     date_str = "2026-01-01"
 
     input = f"{date_str}_1"
     wanted = Reading(date=date.fromisoformat(date_str))
 
-    result = file_name.reading_from(input)
+    result = Reading.from_file_name(input)
     assert wanted == result
 
 
-def test_reading_from_serial_numerical_and_value_integer():
+def test_reading_from_file_name_serial_numerical_and_value_integer():
     date_str = "2026-01-01"
     serial_str = "123456789"
     value_str = "1234"
@@ -24,11 +23,11 @@ def test_reading_from_serial_numerical_and_value_integer():
         date=date.fromisoformat(date_str), serial=serial_str, value=float(value_str)
     )
 
-    result = file_name.reading_from(input)
+    result = Reading.from_file_name(input)
     assert wanted == result
 
 
-def test_reading_from_serial_alphanumerical_and_value_float():
+def test_reading_from_file_name_serial_alphanumerical_and_value_float():
     date_str = "2026-01-01"
     serial_str = "ABC1234GH"
     value_str = "1234-567"
@@ -40,11 +39,11 @@ def test_reading_from_serial_alphanumerical_and_value_float():
         value=float(value_str.replace("-", ".")),
     )
 
-    result = file_name.reading_from(input)
+    result = Reading.from_file_name(input)
     assert wanted == result
 
 
-def test_reading_from_serial_numerical_and_value_integer_with_id():
+def test_reading_from_file_name_serial_numerical_and_value_integer_with_id():
     date_str = "2026-01-01"
     serial_str = "123456789"
     id_str = "1-8-0"
@@ -58,5 +57,5 @@ def test_reading_from_serial_numerical_and_value_integer_with_id():
         value=float(value_str),
     )
 
-    result = file_name.reading_from(input)
+    result = Reading.from_file_name(input)
     assert wanted == result
