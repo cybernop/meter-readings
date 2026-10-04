@@ -4,15 +4,15 @@ from datetime import date
 from pydantic import BaseModel
 
 FILE_NAME_REGEX = re.compile(
-    r"(?P<date>\d{4}-\d{2}-\d{2})_((?P<serial>\w+)(-(?P<id>\d-\d-\d))?_(?P<value>\d+(?:-\d+)?))?"
+    r"(?P<date>\d{4}-\d{2}-\d{2})_(?P<serial>\w+)(-(?P<id>\d-\d-\d))?_(?P<value>\d+(?:-\d+)?)"
 )
 
 
 class Reading(BaseModel):
     date: date
-    serial: str | None = None
+    serial: str
     id: str | None = None
-    value: float | None = None
+    value: float
 
     @staticmethod
     def from_file_name(name: str):

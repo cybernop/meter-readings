@@ -79,9 +79,6 @@ def diff_values(start: Reading, end: Reading, days: int):
     if end.date == start.date:
         return None
 
-    if end.value is None or start.value is None:
-        return None
-
     return (end.value - start.value) / (end.date - start.date).days * days
 
 
@@ -94,11 +91,15 @@ class Readings:
 
     @staticmethod
     def from_files(files: Iterable[Path], allowed_serials: list[str] | None = None):
+        if allowed_serials is None:
+            allowed_serials = []
+
         rs = Readings()
         rs.readings = [
             r
             for f in files
-            if (r := Reading.from_string(f.name, allowed_serials)) is not None
+            if (r := Reading.from_file_name(f.name)) is not None
+            and r.serial in allowed_serials
         ]
 
         return rs
@@ -107,8 +108,6 @@ class Readings:
         res: dict[str, SerialReadings] = {}
 
         for r in self.readings:
-            if r.serial is None:
-                continue
 
             if r.serial not in res:
                 res[r.serial] = SerialReadings(r.serial)

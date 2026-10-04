@@ -7,10 +7,9 @@ def test_reading_from_file_name_only_date():
     date_str = "2026-01-01"
 
     input = f"{date_str}_1"
-    wanted = Reading(date=date.fromisoformat(date_str))
 
     result = Reading.from_file_name(input)
-    assert wanted == result
+    assert result is None
 
 
 def test_reading_from_file_name_serial_numerical_and_value_integer():
