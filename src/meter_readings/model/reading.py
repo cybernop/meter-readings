@@ -1,7 +1,7 @@
 import re
+from collections.abc import Iterable
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Iterable
 
 from .. import log
 
@@ -19,7 +19,7 @@ class Reading:
     @staticmethod
     def from_string(
         string: str, allowed_serials: list[str] | None = None
-    ) -> "Reading | None":
+    ) -> Reading | None:
         match = READING_REGEX.search(string)
 
         if match is None:
@@ -31,7 +31,7 @@ class Reading:
             serial = match["serial"]
 
             if allowed_serials is not None and serial not in allowed_serials:
-                log.warn(f"unknown serial: {serial}")
+                log.warning(f"unknown serial: {serial}")
                 return None
 
             r.serial = serial
@@ -39,7 +39,7 @@ class Reading:
             r.value = match["value"]
 
         except Exception as e:
-            log.warn("cannot parse reading: {}".format(e))
+            log.warning(f"cannot parse reading: {e}")
             return None
 
         return r
@@ -67,7 +67,7 @@ class Reading:
         return self._value
 
     @value.setter
-    def value(self, value: float | int | str):
+    def value(self, value: float | str):
         if isinstance(value, str):
             value = float(value.replace("-", "."))
         elif isinstance(value, int):

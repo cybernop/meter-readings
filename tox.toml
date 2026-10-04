@@ -1,4 +1,4 @@
-env_list = ["3.14"]
+env_list = ["3.14", "lint"]
 
 [env_run_base]
 description = "run the test suite with pytest"
