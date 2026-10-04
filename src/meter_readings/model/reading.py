@@ -9,6 +9,10 @@ FILE_NAME_REGEX = re.compile(
 
 
 class Reading(BaseModel):
+    """
+    Model for a single meter reading
+    """
+
     date: date
     serial: str
     id: str | None = None
@@ -16,6 +20,9 @@ class Reading(BaseModel):
 
     @staticmethod
     def from_file_name(name: str):
+        """
+        Parse the data from `name`
+        """
         match = FILE_NAME_REGEX.search(name)
 
         if not match:
@@ -30,6 +37,9 @@ class Reading(BaseModel):
         return reading
 
     def file_name(self) -> str:
+        """
+        Create a file name that contains the same data
+        """
         value = str(self.value).replace(".", "-").removesuffix("-0")
         name = f"{self.date!s}_{self.serial}{'-' + self.id if self.id else ''}_{value}"
         return name
