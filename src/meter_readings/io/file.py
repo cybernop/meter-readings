@@ -1,9 +1,10 @@
 from pathlib import Path
 
+from ..errors import FileAlreadyExistsError
 from ..model.reading import Reading
 
 
-def migrate(file: Path):
+def migrate(file: Path) -> Path | None:
     """
     Migrate the file name based data to data files.
 
@@ -17,6 +18,19 @@ def migrate(file: Path):
         return
 
     output_file = file.with_suffix(".json")
+
+    if output_file.exists():
+        raise FileAlreadyExistsError(
+            f"migration failed: data file {output_file!s} already exists"
+        )
+
     reading.write(output_file)
 
     return output_file
+
+
+def data_file_exists(file: Path) -> bool:
+    """
+    Check if the data file exists
+    """
+    return file.with_suffix(".json").exists()

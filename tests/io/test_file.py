@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from meter_readings.errors import FileAlreadyExistsError
 from meter_readings.io import file
 
 
@@ -30,6 +31,23 @@ def test_migrate_correct_file_name():
         assert wanted == result
 
 
+def test_migrate_already_exists():
+    file_name = "2026-01-01_ABC1234GH_1234"
+
+    with TemporaryDirectory() as temp_dir:
+        input = Path(temp_dir) / (file_name + ".txt")
+        input.with_suffix(".json").touch()
+
+        try:
+            _ = file.migrate(input)
+
+        except FileAlreadyExistsError:
+            pass
+
+        else:
+            assert False
+
+
 def test_migrate_incorrect_file_name():
     file_name = "foobar"
 
@@ -39,3 +57,15 @@ def test_migrate_incorrect_file_name():
 
         assert output is None
         assert not input.with_suffix(".json").exists()
+
+
+def test_dat_file_exists():
+    file_name = "2026-01-01_ABC1234GH_1234"
+
+    with TemporaryDirectory() as temp_dir:
+        input = Path(temp_dir) / (file_name + ".txt")
+
+        assert not file.data_file_exists(input)
+
+        input.with_suffix(".json").touch()
+        assert file.data_file_exists(input)
