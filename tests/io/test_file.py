@@ -1,10 +1,8 @@
 import json
-from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from meter_readings.io import file
-from meter_readings.model.reading import Reading
 
 
 def test_migrate_correct_file_name():
@@ -13,12 +11,11 @@ def test_migrate_correct_file_name():
     value_str = "1234"
 
     file_name = f"{date_str}_{serial_str}_{value_str}"
-    reading = Reading(
-        date=date.fromisoformat(date_str),
-        serial=serial_str,
-        value=float(value_str),
-    )
-    wanted = json.loads(reading.model_dump_json())  # pyright: ignore[reportAny]
+    wanted = {
+        "date": date_str,
+        "serial": serial_str,
+        "value": float(value_str),
+    }
 
     with TemporaryDirectory() as temp_dir:
         input = Path(temp_dir) / (file_name + ".txt")

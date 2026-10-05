@@ -17,8 +17,6 @@ def migrate(file: Path):
         return
 
     output_file = file.with_suffix(".json")
-
-    # TODO: move writing to reading model
-    _ = output_file.write_text(reading.model_dump_json(indent=4), "utf-8")
+    reading.write(output_file)
 
     return output_file

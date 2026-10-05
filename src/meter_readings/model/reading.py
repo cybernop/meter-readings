@@ -1,5 +1,6 @@
 import re
 from datetime import date
+from pathlib import Path
 
 from pydantic import BaseModel
 
@@ -18,6 +19,12 @@ class Reading(BaseModel):
     id: str | None = None
     value: float
 
+    def dumps(self):
+        return self.model_dump_json(indent=4, exclude_none=True)
+
+    def write(self, file: Path):
+        _ = file.write_text(self.dumps(), "utf-8")
+
     @staticmethod
     def from_file_name(name: str):
         """
@@ -35,6 +42,11 @@ class Reading(BaseModel):
 
         reading = Reading.model_validate(data)
         return reading
+
+    @staticmethod
+    def read(file: Path):
+        content = file.read_text("utf-8")
+        return Reading.model_validate_json(content)
 
     def file_name(self) -> str:
         """

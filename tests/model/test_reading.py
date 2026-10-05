@@ -1,4 +1,7 @@
+import json
 from datetime import date
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from meter_readings.model.reading import Reading
 
@@ -133,4 +136,67 @@ def test_reading_to_reading():
 
     file_name = input.file_name()
     result = Reading.from_file_name(file_name)
+    assert input == result
+
+
+def test_read():
+    input = {
+        "date": "2026-01-01",
+        "serial": "123456789",
+        "value": 1234,
+    }
+
+    with TemporaryDirectory() as tmp_dir:
+        tmp_file = Path(tmp_dir) / "file.json"
+        _ = tmp_file.write_text(json.dumps(input))
+
+        result = Reading.read(tmp_file)
+
+    assert input == json.loads(result.model_dump_json(exclude_none=True))
+
+
+def test_write():
+    input = Reading(
+        date=date.fromisoformat("2026-01-01"), serial="123456789", value=1234
+    )
+
+    with TemporaryDirectory() as tmp_dir:
+        tmp_file = Path(tmp_dir) / "file.json"
+
+        input.write(tmp_file)
+        result = Reading.model_validate_json(tmp_file.read_text("utf-8"))
+
+    assert input == result
+
+
+def test_read_write():
+    input = {
+        "date": "2026-01-01",
+        "serial": "123456789",
+        "value": 1234,
+    }
+
+    with TemporaryDirectory() as tmp_dir:
+        tmp_file = Path(tmp_dir) / "file.json"
+        _ = tmp_file.write_text(json.dumps(input))
+
+        tmp = Reading.read(tmp_file)
+        _ = tmp.write(tmp_file)
+
+        result = json.loads(tmp_file.read_text("utf-8"))  # pyright: ignore[reportAny]
+
+    assert input == result
+
+
+def test_write_read():
+    input = Reading(
+        date=date.fromisoformat("2026-01-01"), serial="123456789", value=1234
+    )
+
+    with TemporaryDirectory() as tmp_dir:
+        tmp_file = Path(tmp_dir) / "file.json"
+
+        _ = input.write(tmp_file)
+        result = Reading.read(tmp_file)
+
     assert input == result
