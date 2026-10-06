@@ -59,13 +59,13 @@ def test_migrate_incorrect_file_name():
         assert not input.with_suffix(".json").exists()
 
 
-def test_dat_file_exists():
+def test_get_data_file():
     file_name = "2026-01-01_ABC1234GH_1234"
 
     with TemporaryDirectory() as temp_dir:
         input = Path(temp_dir) / (file_name + ".txt")
 
-        assert not file.data_file_exists(input)
+        assert file.get_data_file(input) is None
 
         input.with_suffix(".json").touch()
-        assert file.data_file_exists(input)
+        assert file.get_data_file(input) is not None

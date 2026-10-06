@@ -36,8 +36,10 @@ def migrate(file: Path) -> Path | None:
     return output_file
 
 
-def data_file_exists(file: Path) -> bool:
+def get_data_file(file: Path) -> Path | None:
     """
-    Check if the data file exists
+    Get the data file if exists
     """
-    return file.with_suffix(".json").exists()
+    data_file = file.with_suffix(".json")
+
+    return data_file if data_file.exists() else None
