@@ -41,5 +41,3 @@ def data_file_exists(file: Path) -> bool:
     Check if the data file exists
     """
     return file.with_suffix(".json").exists()
-    """
-    return file.with_suffix(".json").exists()
