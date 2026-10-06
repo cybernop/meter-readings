@@ -1,6 +1,8 @@
 from pathlib import Path
 
-from ..errors import FileAlreadyExistsError
+from pydantic import ValidationError
+
+from ..errors import FileAlreadyExistsError, ReadingInvalidError
 from ..model.reading import Reading
 
 
@@ -12,7 +14,12 @@ def migrate(file: Path) -> Path | None:
     and the file returned. `None` is returned otherwise.
     """
     file_name = file.stem
-    reading = Reading.from_file_name(file_name)
+
+    try:
+        reading = Reading.from_file_name(file_name)
+
+    except ValidationError as e:
+        raise ReadingInvalidError(f"error while  parsing from file name '{file!s}'", e)
 
     if not reading:
         return
@@ -32,5 +39,7 @@ def migrate(file: Path) -> Path | None:
 def data_file_exists(file: Path) -> bool:
     """
     Check if the data file exists
+    """
+    return file.with_suffix(".json").exists()
     """
     return file.with_suffix(".json").exists()
