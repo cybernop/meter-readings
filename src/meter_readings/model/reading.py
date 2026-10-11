@@ -9,7 +9,7 @@ FILE_NAME_REGEX = re.compile(
 )
 
 
-class Reading(BaseModel):
+class Record(BaseModel):
     """
     Model for a single meter reading
     """
@@ -40,13 +40,13 @@ class Reading(BaseModel):
         if value := data.get("value"):
             data["value"] = value.replace("-", ".")
 
-        reading = Reading.model_validate(data)
+        reading = Record.model_validate(data)
         return reading
 
     @staticmethod
     def read(file: Path):
         content = file.read_text("utf-8")
-        return Reading.model_validate_json(content)
+        return Record.model_validate_json(content)
 
     def file_name(self) -> str:
         """

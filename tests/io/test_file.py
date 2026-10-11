@@ -5,11 +5,11 @@ from tempfile import TemporaryDirectory
 
 from meter_readings.errors import FileAlreadyExistsError
 from meter_readings.io import file
-from meter_readings.model.reading import Reading
+from meter_readings.model.reading import Record
 
 
 def test_read_records_single():
-    wanted = Reading(
+    wanted = Record(
         date=date.fromisoformat("2026-01-01"),
         serial="ABC1234GH",
         value=1234,
@@ -28,12 +28,12 @@ def test_read_records_single():
 
 def test_read_records_multiple():
     wanted = [
-        Reading(
+        Record(
             date=date.fromisoformat("2026-01-01"),
             serial="ABC1234GH",
             value=1234,
         ),
-        Reading(
+        Record(
             date=date.fromisoformat("2026-01-02"),
             serial="ABC1234GH",
             value=1235,
@@ -57,7 +57,7 @@ def test_read_records_multiple():
 
 
 def test_read_records_migrate():
-    wanted = Reading(
+    wanted = Record(
         date=date.fromisoformat("2026-01-01"),
         serial="ABC1234GH",
         value=1234,

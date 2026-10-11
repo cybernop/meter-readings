@@ -4,12 +4,12 @@ from pydantic import ValidationError
 
 from ..errors import FileAlreadyExistsError, ReadingInvalidError
 from ..io import file
-from ..model.reading import Reading
+from ..model.reading import Record
 
 IMG_SUFFIXES = [".jpg", ".jpeg", ".png"]
 
 
-def read_records(directory: Path | str) -> list[Reading]:
+def read_records(directory: Path | str) -> list[Record]:
     """
     Read the records from a directory
 
@@ -18,7 +18,7 @@ def read_records(directory: Path | str) -> list[Reading]:
     already exist, a migration is done, that tries to pull the data from the
     file name.
     """
-    readings: list[Reading] = []
+    readings: list[Record] = []
     for f in Path(directory).expanduser().iterdir():
         if f.suffix.lower() in IMG_SUFFIXES:
             if (data_file := file.get_data_file(f)) is None:
@@ -27,7 +27,7 @@ def read_records(directory: Path | str) -> list[Reading]:
             if data_file is None:
                 continue
 
-            readings.append(Reading.read(data_file))
+            readings.append(Record.read(data_file))
 
     return readings
 
@@ -42,7 +42,7 @@ def migrate(file: Path) -> Path | None:
     file_name = file.stem
 
     try:
-        reading = Reading.from_file_name(file_name)
+        reading = Record.from_file_name(file_name)
 
     except ValidationError as e:
         raise ReadingInvalidError(f"error while  parsing from file name '{file!s}'", e)

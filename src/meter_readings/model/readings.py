@@ -2,15 +2,15 @@ from collections.abc import Iterable
 from datetime import date, timedelta
 from pathlib import Path
 
-from .reading import Reading
+from .reading import Record
 
 
 class SerialReadings:
     def __init__(self, serial: str) -> None:
         self.serial: str = serial
-        self.readings: list[Reading] = []
+        self.readings: list[Record] = []
 
-    def latest(self) -> Reading | None:
+    def latest(self) -> Record | None:
         return max(self.readings, key=lambda r: r.date)
 
     def history(
@@ -75,7 +75,7 @@ class SerialReadings:
         return diff, trend, mean, mean_diff
 
 
-def diff_values(start: Reading, end: Reading, days: int):
+def diff_values(start: Record, end: Record, days: int):
     if end.date == start.date:
         return None
 
@@ -84,7 +84,7 @@ def diff_values(start: Reading, end: Reading, days: int):
 
 class Readings:
     def __init__(self) -> None:
-        self.readings: list[Reading] = []
+        self.readings: list[Record] = []
 
     def __len__(self):
         return len(self.readings)
@@ -98,7 +98,7 @@ class Readings:
         rs.readings = [
             r
             for f in files
-            if (r := Reading.from_file_name(f.name)) is not None
+            if (r := Record.from_file_name(f.name)) is not None
             and r.serial in allowed_serials
         ]
 
