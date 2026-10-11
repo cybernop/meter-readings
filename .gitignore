@@ -1,3 +1,6 @@
 # Python
 *.egg-info
 __pycache__
+
+# IDE
+.vscode

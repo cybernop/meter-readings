@@ -16,7 +16,7 @@ class Config(BaseModel):
     @staticmethod
     def from_yaml(file: Path):
         if not file.exists():
-            raise Exception("Config file `{}` does not exist".format(file))
+            raise Exception(f"Config file `{file}` does not exist")
 
         content = yaml.safe_load(file.read_text(encoding="utf-8"))
 
