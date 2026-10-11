@@ -1,9 +1,90 @@
 import json
+from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from meter_readings.errors import FileAlreadyExistsError
 from meter_readings.io import file
+from meter_readings.model.reading import Reading
+
+
+def test_read_records_single():
+    wanted = Reading(
+        date=date.fromisoformat("2026-01-01"),
+        serial="ABC1234GH",
+        value=1234,
+    )
+
+    with TemporaryDirectory() as tmp_dir:
+        file_name = wanted.file_name()
+        (Path(tmp_dir) / (file_name + ".png")).touch()
+        wanted.write(Path(tmp_dir) / (file_name + ".json"))
+
+        result = file.read_records(tmp_dir)
+
+        assert len(result) == 1
+        assert wanted == result[0]
+
+
+def test_read_records_multiple():
+    wanted = [
+        Reading(
+            date=date.fromisoformat("2026-01-01"),
+            serial="ABC1234GH",
+            value=1234,
+        ),
+        Reading(
+            date=date.fromisoformat("2026-01-02"),
+            serial="ABC1234GH",
+            value=1235,
+        ),
+    ]
+
+    with TemporaryDirectory() as tmp_dir:
+        for w in wanted:
+            file_name = w.file_name()
+            (Path(tmp_dir) / (file_name + ".png")).touch()
+            w.write(Path(tmp_dir) / (file_name + ".json"))
+
+        result = file.read_records(tmp_dir)
+
+    wanted = sorted(wanted, key=lambda x: x.date)
+    result = sorted(result, key=lambda x: x.date)
+
+    assert len(result) == 2
+    assert wanted[0] == result[0]
+    assert wanted[1] == result[1]
+
+
+def test_read_records_migrate():
+    wanted = Reading(
+        date=date.fromisoformat("2026-01-01"),
+        serial="ABC1234GH",
+        value=1234,
+    )
+
+    with TemporaryDirectory() as tmp_dir:
+        file_name = wanted.file_name()
+        (Path(tmp_dir) / (file_name + ".png")).touch()
+        assert not (Path(tmp_dir) / (file_name + ".json")).exists()
+
+        result = file.read_records(tmp_dir)
+
+        assert (Path(tmp_dir) / (file_name + ".json")).exists()
+        assert len(result) == 1
+        assert wanted == result[0]
+
+
+def test_read_records_migrate_not_possible():
+    with TemporaryDirectory() as tmp_dir:
+        file_name = "foobar"
+
+        (Path(tmp_dir) / (file_name + ".png")).touch()
+        assert not (Path(tmp_dir) / (file_name + ".json")).exists()
+
+        result = file.read_records(tmp_dir)
+        assert not (Path(tmp_dir) / (file_name + ".json")).exists()
+        assert len(result) == 0
 
 
 def test_migrate_correct_file_name():
