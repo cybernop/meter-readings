@@ -6,7 +6,7 @@ from pydantic import ValidationError
 
 from .. import log
 from ..errors import FileAlreadyExistsError, ReadDirectoryNotExist, ReadingInvalidError
-from ..model.reading import Record
+from ..model.record import Record
 
 IMG_SUFFIXES = [".jpg", ".jpeg", ".png"]
 DATE_REGEX = re.compile(

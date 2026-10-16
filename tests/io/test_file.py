@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 
 from meter_readings.errors import FileAlreadyExistsError, ReadDirectoryNotExist
 from meter_readings.io import file
-from meter_readings.model.reading import Record
+from meter_readings.model.record import Record
 
 
 def test_read_records_single():

@@ -2,7 +2,7 @@ from collections.abc import Iterable
 from datetime import date, timedelta
 from pathlib import Path
 
-from .reading import Record
+from .record import Record
 
 
 class SerialReadings:

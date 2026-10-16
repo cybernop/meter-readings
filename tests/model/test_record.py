@@ -3,7 +3,7 @@ from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from meter_readings.model.reading import Record
+from meter_readings.model.record import Record
 
 
 def test_from_file_name_only_date():
