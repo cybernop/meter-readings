@@ -4,3 +4,7 @@ class FileAlreadyExistsError(Exception):
 
 class ReadingInvalidError(Exception):
     pass
+
+
+class ReadDirectoryNotExist(Exception):
+    pass

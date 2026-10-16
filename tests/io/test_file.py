@@ -3,7 +3,7 @@ from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from meter_readings.errors import FileAlreadyExistsError
+from meter_readings.errors import FileAlreadyExistsError, ReadDirectoryNotExist
 from meter_readings.io import file
 from meter_readings.model.reading import Record
 
@@ -150,3 +150,90 @@ def test_get_data_file():
 
         input.with_suffix(".json").touch()
         assert file.get_data_file(input) is not None
+
+
+def test_move_with_date_not_exists():
+    input = Path("foobar")
+
+    try:
+        file.move_with_date(input, Path())
+
+    except ReadDirectoryNotExist:
+        pass
+
+    else:
+        assert False
+
+
+def test_move_with_date_multiple_files():
+    with TemporaryDirectory() as input, TemporaryDirectory() as output:
+        input_dir = Path(input)
+        output_dir = Path(output)
+
+        input_file_names = ["20200101_foo", "20200101-bar"]
+
+        for f in input_file_names:
+            (input_dir / (f + ".jpg")).touch()
+
+        input_list = list(input_dir.glob("*"))
+        output_list = list(output_dir.glob("*"))
+
+        assert len(input_list) == 2
+        assert len(output_list) == 0
+
+        file.move_with_date(input_dir, output_dir)
+
+        input_list = list(input_dir.glob("*"))
+        output_list = list(output_dir.glob("*"))
+
+        assert len(input_list) == 0
+        assert len(output_list) == 2
+
+        wanted = ["2020-01-01_00.jpg", "2020-01-01_01.jpg"]
+
+        for f in output_list:
+            assert f.name in wanted
+
+
+def test_move_with_date_invalid_ext():
+    with TemporaryDirectory() as input, TemporaryDirectory() as output:
+        input_dir = Path(input)
+        output_dir = Path(output)
+
+        (input_dir / "20200101.txt").touch()
+
+        input_list = list(input_dir.glob("*"))
+        output_list = list(output_dir.glob("*"))
+
+        assert len(input_list) == 1
+        assert len(output_list) == 0
+
+        file.move_with_date(input_dir, output_dir)
+
+        input_list = list(input_dir.glob("*"))
+        output_list = list(output_dir.glob("*"))
+
+        assert len(input_list) == 1
+        assert len(output_list) == 0
+
+
+def test_move_with_date_invalid_name():
+    with TemporaryDirectory() as input, TemporaryDirectory() as output:
+        input_dir = Path(input)
+        output_dir = Path(output)
+
+        (input_dir / "foobar.jpg").touch()
+
+        input_list = list(input_dir.glob("*"))
+        output_list = list(output_dir.glob("*"))
+
+        assert len(input_list) == 1
+        assert len(output_list) == 0
+
+        file.move_with_date(input_dir, output_dir)
+
+        input_list = list(input_dir.glob("*"))
+        output_list = list(output_dir.glob("*"))
+
+        assert len(input_list) == 1
+        assert len(output_list) == 0
