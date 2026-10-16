@@ -69,4 +69,3 @@ def get_data_file(file: Path) -> Path | None:
     data_file = file.with_suffix(".json")
 
     return data_file if data_file.exists() else None
-    return data_file if data_file.exists() else None
