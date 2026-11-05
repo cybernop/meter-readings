@@ -76,6 +76,9 @@ class SerialRecords:
 
         return diff, trend, mean, mean_diff
 
+    def __len__(self) -> int:
+        return len(self.readings)
+
 
 def diff_values(start: Record, end: Record, days: int):
     if end.date == start.date:
