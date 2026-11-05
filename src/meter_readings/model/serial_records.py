@@ -4,20 +4,30 @@ from .record import Record
 
 
 class SerialRecords:
-    def __init__(self, serial: str) -> None:
+    def __init__(self, serial: str, records: list[Record] | None = None) -> None:
         self.serial: str = serial
-        self.readings: list[Record] = []
+        self.entries: list[Record] = records or []
 
     def latest(self) -> Record | None:
-        return max(self.readings, key=lambda r: r.date)
+        """
+        Get the entry with the latest date.
+        """
+        return max(self.entries, key=lambda r: r.date)
 
     def history(
         self,
         start: dt.date | None = None,
         days: int = 0,
         weeks: int = 0,
-        # years: int = 0,
+        years: int = 0,
     ):
+        """
+        Get a historic entry with the given time difference
+
+        The reference date is defined by `start` or if not specified by the
+        latest entry. The date is shifted back by `days`, `weeks` and `years`.
+        The entry most close to the shifted date is returned.
+        """
         if start is None:
             if not (latest := self.latest()):
                 return None
@@ -25,9 +35,9 @@ class SerialRecords:
             start = latest.date
 
         entry = start - dt.timedelta(days=days, weeks=weeks)
-        # entry.replace(year=entry.year - years)
+        entry = entry.replace(year=entry.year - years)
 
-        return min(self.readings, key=lambda r: abs(r.date - entry))
+        return min(self.entries, key=lambda r: abs(r.date - entry))
 
     def weekly(self):
         days = 7
@@ -47,7 +57,17 @@ class SerialRecords:
 
         return self._stats(days, mean_dur)
 
-    def _stats(self, stat_days: int, stat_mean_days: int):
+    def _stats(
+        self, stat_days: int, stat_mean_days: int
+    ) -> tuple[float | None, float | None, float | None, float | None]:
+        """
+        Calculates statistics based on the provided time period(s)
+
+        `diff`: Difference over the time period between the latest entry and the one `stat_days` before
+        `trend`: Change from the previous to the current time period
+        `mean`: Mean over `stat_mean_days`
+        `mean_diff`: Difference between the mean and the difference over the current peroid
+        """
         diff = None
         trend = None
         mean = None
@@ -77,7 +97,7 @@ class SerialRecords:
         return diff, trend, mean, mean_diff
 
     def __len__(self) -> int:
-        return len(self.readings)
+        return len(self.entries)
 
 
 def diff_values(start: Record, end: Record, days: int):
