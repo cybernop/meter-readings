@@ -1,11 +1,9 @@
-from collections.abc import Iterable
 from datetime import date, timedelta
-from pathlib import Path
 
 from .record import Record
 
 
-class SerialReadings:
+class SerialRecords:
     def __init__(self, serial: str) -> None:
         self.serial: str = serial
         self.readings: list[Record] = []
@@ -80,38 +78,3 @@ def diff_values(start: Record, end: Record, days: int):
         return None
 
     return (end.value - start.value) / (end.date - start.date).days * days
-
-
-class Readings:
-    def __init__(self) -> None:
-        self.readings: list[Record] = []
-
-    def __len__(self):
-        return len(self.readings)
-
-    @staticmethod
-    def from_files(files: Iterable[Path], allowed_serials: list[str] | None = None):
-        if allowed_serials is None:
-            allowed_serials = []
-
-        rs = Readings()
-        rs.readings = [
-            r
-            for f in files
-            if (r := Record.from_file_name(f.name)) is not None
-            and r.serial in allowed_serials
-        ]
-
-        return rs
-
-    def group_by_serial(self):
-        res: dict[str, SerialReadings] = {}
-
-        for r in self.readings:
-
-            if r.serial not in res:
-                res[r.serial] = SerialReadings(r.serial)
-
-            res[r.serial].readings.append(r)
-
-        return res

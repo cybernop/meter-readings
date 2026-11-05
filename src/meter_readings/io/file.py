@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from .. import log
 from ..errors import FileAlreadyExistsError, ReadDirectoryNotExist, ReadingInvalidError
 from ..model.record import Record
+from ..model.records import Records
 
 IMG_SUFFIXES = [".jpg", ".jpeg", ".png"]
 DATE_REGEX = re.compile(
@@ -14,7 +15,7 @@ DATE_REGEX = re.compile(
 )
 
 
-def read_records(directory: Path | str) -> list[Record]:
+def read_records(directory: Path | str) -> Records:
     """
     Read the records from a directory
 
@@ -23,7 +24,7 @@ def read_records(directory: Path | str) -> list[Record]:
     already exist, a migration is done, that tries to pull the data from the
     file name.
     """
-    readings: list[Record] = []
+    records: list[Record] = []
     for f in Path(directory).expanduser().iterdir():
         if f.suffix.lower() in IMG_SUFFIXES:
             if (data_file := get_data_file(f)) is None:
@@ -32,9 +33,10 @@ def read_records(directory: Path | str) -> list[Record]:
             if data_file is None:
                 continue
 
-            readings.append(Record.read(data_file))
+            records.append(Record.read(data_file))
 
-    return readings
+    log.info(f"got {len(records)} records")
+    return Records(records)
 
 
 def migrate(file: Path) -> Path | None:
@@ -44,6 +46,8 @@ def migrate(file: Path) -> Path | None:
     If `file` contains correct data in its file name, a data file with the same stem is created
     and the file returned. `None` is returned otherwise.
     """
+
+    log.info(f"migrating {file}")
     file_name = file.stem
 
     try:
