@@ -1,5 +1,5 @@
+import datetime as dt
 import re
-from datetime import date
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -14,7 +14,7 @@ class Record(BaseModel):
     Model for a single meter reading
     """
 
-    date: date
+    date: dt.date
     serial: str
     id: str | None = None
     value: float

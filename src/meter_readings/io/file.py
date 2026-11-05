@@ -1,5 +1,5 @@
+import datetime as dt
 import re
-from datetime import date as datetime_date
 from pathlib import Path
 
 from pydantic import ValidationError
@@ -112,7 +112,7 @@ def move_with_date(input_dir: Path, output_dir: Path):
             log.warning(f"date not found in `{file}`, skipping")
             continue
 
-        date = datetime_date.fromisoformat(date_match.group(0))
+        date = dt.date.fromisoformat(date_match.group(0))
 
         new_file = output_dir / (date.isoformat() + ".jpg")
 

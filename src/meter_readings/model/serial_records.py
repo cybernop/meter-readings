@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+import datetime as dt
 
 from .record import Record
 
@@ -12,7 +12,11 @@ class SerialRecords:
         return max(self.readings, key=lambda r: r.date)
 
     def history(
-        self, start: date | None = None, days: int = 0, weeks: int = 0, years: int = 0
+        self,
+        start: dt.date | None = None,
+        days: int = 0,
+        weeks: int = 0,
+        # years: int = 0,
     ):
         if start is None:
             if not (latest := self.latest()):
@@ -20,8 +24,8 @@ class SerialRecords:
 
             start = latest.date
 
-        entry = start - timedelta(days=days, weeks=weeks)
-        entry.replace(year=entry.year - years)
+        entry = start - dt.timedelta(days=days, weeks=weeks)
+        # entry.replace(year=entry.year - years)
 
         return min(self.readings, key=lambda r: abs(r.date - entry))
 

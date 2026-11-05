@@ -1,5 +1,5 @@
+import datetime as dt
 import json
-from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -22,7 +22,7 @@ def test_from_file_name_serial_numerical_and_value_integer():
 
     input = f"{date_str}_{serial_str}_{value_str}"
     wanted = Record(
-        date=date.fromisoformat(date_str), serial=serial_str, value=float(value_str)
+        date=dt.date.fromisoformat(date_str), serial=serial_str, value=float(value_str)
     )
 
     result = Record.from_file_name(input)
@@ -36,7 +36,7 @@ def test_from_file_name_serial_alphanumerical_and_value_float():
 
     input = f"{date_str}_{serial_str}_{value_str}"
     wanted = Record(
-        date=date.fromisoformat(date_str),
+        date=dt.date.fromisoformat(date_str),
         serial=serial_str,
         value=float(value_str.replace("-", ".")),
     )
@@ -53,7 +53,7 @@ def test_from_file_name_serial_numerical_and_value_integer_with_id():
 
     input = f"{date_str}_{serial_str}-{id_str}_{value_str}"
     wanted = Record(
-        date=date.fromisoformat(date_str),
+        date=dt.date.fromisoformat(date_str),
         serial=serial_str,
         id=id_str,
         value=float(value_str),
@@ -69,7 +69,7 @@ def test_file_name():
     value_str = "1234"
 
     input = Record(
-        date=date.fromisoformat(date_str), serial=serial_str, value=float(value_str)
+        date=dt.date.fromisoformat(date_str), serial=serial_str, value=float(value_str)
     )
     wanted = f"{date_str}_{serial_str}_{value_str}"
 
@@ -84,7 +84,7 @@ def test_file_name_with_id():
     value_str = "1234"
 
     input = Record(
-        date=date.fromisoformat(date_str),
+        date=dt.date.fromisoformat(date_str),
         serial=serial_str,
         id=id_str,
         value=float(value_str),
@@ -129,7 +129,7 @@ def test_reading_to_reading():
     value_str = "1234-567"
 
     input = Record(
-        date=date.fromisoformat(date_str),
+        date=dt.date.fromisoformat(date_str),
         serial=serial_str,
         value=float(value_str.replace("-", ".")),
     )
@@ -157,7 +157,7 @@ def test_read():
 
 def test_write():
     input = Record(
-        date=date.fromisoformat("2026-01-01"), serial="123456789", value=1234
+        date=dt.date.fromisoformat("2026-01-01"), serial="123456789", value=1234
     )
 
     with TemporaryDirectory() as tmp_dir:
@@ -190,7 +190,7 @@ def test_read_write():
 
 def test_write_read():
     input = Record(
-        date=date.fromisoformat("2026-01-01"), serial="123456789", value=1234
+        date=dt.date.fromisoformat("2026-01-01"), serial="123456789", value=1234
     )
 
     with TemporaryDirectory() as tmp_dir:
