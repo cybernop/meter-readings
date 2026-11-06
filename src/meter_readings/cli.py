@@ -1,31 +1,24 @@
 from pathlib import Path
 
-from . import log
-from .model.reading import READING_REGEX, Readings, SerialReadings
+from .io.file import move_with_date, read_records
+from .model.serial_records import SerialRecords
 
 
-def get_readings(input_dir: Path, allowed_serials: list[str] | None = None):
-    print("\nGet Readings")
-
-    input_dir = input_dir.expanduser().absolute()
-
-    log.info(f"got {len(list(input_dir.iterdir()))} files")
-
-    not_matching = [
-        f
-        for f in input_dir.iterdir()
-        if f.is_file() and READING_REGEX.search(f.name) is None
-    ]
-    log.info(f"{len(not_matching)} not matching readings pattern")
-
-    readings = Readings.from_files(input_dir.iterdir(), allowed_serials)
-    log.info(f"got {len(readings)}\n")
-
-    return readings
+def cli(input_folder: Path, data_folder: Path, output_dir: Path):
+    move_with_date(input_folder, data_folder)
+    records = read_records(data_folder)
+    render_grouped_readings(
+        records.group_by_serial(allowed_serials), serial_map, output_dir
+    )
+    # TODO: extract meter's number
+    # TODO: extract meter reading
+    # TODO: read information into table file
+    # TODO: print latest trends
+    # TODO: (optional) generate graph
 
 
 def render_grouped_readings(
-    readings: dict[str, SerialReadings], serials: dict[str, str], output_dir: Path
+    readings: dict[str, SerialRecords], serials: dict[str, str], output_dir: Path
 ):
     lines = generate_stats(readings, serials)
 
@@ -40,7 +33,7 @@ def render_grouped_readings(
         print(line)
 
 
-def generate_stats(readings: dict[str, SerialReadings], serials: dict[str, str]):
+def generate_stats(readings: dict[str, SerialRecords], serials: dict[str, str]):
     lines: list[str] = []
     for s, sr in readings.items():
         line = f"{serials[s]} ({s})"
