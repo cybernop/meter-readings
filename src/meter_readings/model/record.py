@@ -1,6 +1,7 @@
 import datetime as dt
 import re
 from pathlib import Path
+from typing import Self
 
 from pydantic import BaseModel
 
@@ -55,3 +56,12 @@ class Record(BaseModel):
         value = str(self.value).replace(".", "-").removesuffix("-0")
         name = f"{self.date!s}_{self.serial}{'-' + self.id if self.id else ''}_{value}"
         return name
+
+    def __sub__(self, other: Self):
+        """
+        Normalized difference between records by days
+        """
+        if other.date == self.date:
+            return 0.0
+
+        return (self.value - other.value) / (self.date - other.date).days

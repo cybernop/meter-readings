@@ -200,3 +200,29 @@ def test_write_read():
         result = Record.read(tmp_file)
 
     assert input == result
+
+
+def test_sub_diff_date():
+    first = Record(
+        date=dt.date.fromisoformat("2026-01-01"), serial="123456789", value=1
+    )
+
+    second = Record(
+        date=dt.date.fromisoformat("2026-01-07"), serial="123456789", value=7
+    )
+
+    diff = second - first
+    assert diff == 1
+
+
+def test_sub_same_date():
+    first = Record(
+        date=dt.date.fromisoformat("2026-01-01"), serial="123456789", value=0
+    )
+
+    second = Record(
+        date=dt.date.fromisoformat("2026-01-01"), serial="123456789", value=7
+    )
+
+    diff = second - first
+    assert diff == 0
